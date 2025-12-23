@@ -1,0 +1,332 @@
+          ADDM Report for Task 'TASK_145676'
+          ----------------------------------
+
+Analysis Period
+---------------
+AWR snapshot range from 95333 to 95355.
+Time period starts at 30-NOV-25 12.30.12 PM
+Time period ends at 01-DEC-25 10.30.39 AM
+
+Analysis Target
+---------------
+Database 'HIDBPROD' with DB ID 745567283.
+Database version 11.2.0.4.0.
+ADDM performed an analysis of instance hidbprod, numbered 1 and hosted at
+ORACLEDBNEW_1.
+
+Activity During the Analysis Period
+-----------------------------------
+Total database time was 327290 seconds.
+The average number of active sessions was 4.13.
+
+Summary of Findings
+-------------------
+   Description         Active Sessions      Recommendations
+                       Percent of Activity
+   ------------------  -------------------  ---------------
+1  Top SQL Statements  2.86 | 69.2          5
+2  Table Locks         2.17 | 52.46         1
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+          Findings and Recommendations
+          ----------------------------
+
+Finding 1: Top SQL Statements
+Impact is 2.86 active sessions, 69.2% of total activity.
+--------------------------------------------------------
+SQL statements consuming significant database time were found. These
+statements offer a good opportunity for performance improvement.
+
+   Recommendation 1: SQL Tuning
+   Estimated benefit is 2.17 active sessions, 52.43% of total activity.
+   --------------------------------------------------------------------
+   Action
+      Investigate the INSERT statement with SQL_ID "fc3jzq0tcwatf" for
+      possible performance improvements. You can supplement the information
+      given here with an ASH report for this SQL_ID.
+      Related Object
+         SQL statement with SQL_ID fc3jzq0tcwatf.
+         INSERT INTO HI.LOG_CLAIM_DATA ( CLAIM_DATA_ID, DATA_SOURCE, USER_ID,
+         USER_PASSWORD, CLAIM_NO, HA_CLAIM_NO, ACKNOWLEDGMENT,
+         ACKNOWLEDGMENT_MSG, DATA_TRACE, CREATED_BY, CREATED_DATE,
+         CREATED_MACHINEIP, CREATED_PROC_NAME, CREATED_APP_NAME ) VALUES (
+         :B12 , :B11 , :B10 , :B9 , :B8 , :B7 , :B6 , :B5 , :B4 , :B3 ,
+         SYSDATE, :B2 , :B1 , 'CLAIM_SERVICE' )
+   Rationale
+      The SQL spent only 0% of its database time on CPU, I/O and Cluster
+      waits. Therefore, the SQL Tuning Advisor is not applicable in this case.
+      Look at performance data for the SQL to find potential improvements.
+   Rationale
+      Database time for this SQL was divided as follows: 100% for SQL
+      execution, 0% for parsing, 0% for PL/SQL execution and 0% for Java
+      execution.
+   Rationale
+      SQL statement with SQL_ID "fc3jzq0tcwatf" was executed 46944 times and
+      had an average elapsed time of 2.9 seconds.
+   Rationale
+      Waiting for event "enq: TM - contention" in wait class "Application"
+      accounted for 99% of the database time spent in processing the SQL
+      statement with SQL_ID "fc3jzq0tcwatf".
+   Rationale
+      Top level calls to execute the PL/SQL statement with SQL_ID
+      "0gh31qftcxt1r" are responsible for 100% of the database time spent on
+      the INSERT statement with SQL_ID "fc3jzq0tcwatf".
+      Related Object
+         SQL statement with SQL_ID 0gh31qftcxt1r.
+         begin HI.USP_ADD_LOG_CLAIM_DATA(I_CLAIM_DATA_ID=>:I_CLAIM_DATA_ID,
+         I_DATA_SOURCE=>:I_DATA_SOURCE, I_USER_ID=>:I_USER_ID,
+         I_USER_PASSWORD=>:I_USER_PASSWORD, I_CLAIM_NO=>:I_CLAIM_NO,
+         I_HA_CLAIM_NO=>:I_HA_CLAIM_NO, I_ACKNOWLEDGMENT=>:I_ACKNOWLEDGMENT,
+         I_ACKNOWLEDGMENT_MSG=>:I_ACKNOWLEDGMENT_MSG,
+         I_DATA_TRACE=>:I_DATA_TRACE, I_CREATED_BY=>:I_CREATED_BY,
+         I_MACHINEIP=>:I_MACHINEIP, I_ACTION=>:I_ACTION,
+         o_ExceptionStr=>:o_ExceptionStr, o_CLAIM_DATA_ID=>:o_CLAIM_DATA_ID);
+         end;
+
+   Recommendation 2: SQL Tuning
+   Estimated benefit is .27 active sessions, 6.51% of total activity.
+   ------------------------------------------------------------------
+   Action
+      Run SQL Tuning Advisor on the SELECT statement with SQL_ID
+      "a4akgk9g69h83".
+      Related Object
+         SQL statement with SQL_ID a4akgk9g69h83.
+         SELECT d.* FROM ( SELECT d.*, ROWNUM ROW# FROM (SELECT d.* FROM
+         (select sql_text AS SQL, s.cpu_time/1000 AS CPU_MSECONDS, CASE WHEN
+         s.cpu_time < 1000 THEN '< 1 ms' WHEN s.cpu_time < 1000000 THEN
+         to_char(round(s.cpu_time/1000,1)) || ' ms' WHEN s.cpu_time < 60000000
+         THEN to_char(round(s.cpu_time/1000000,1)) || ' s' ELSE
+         to_char(round(s.cpu_time/60000000,1)) || ' m' END AS
+         CPU_SECONDS_FORM, DECODE(l.max_cpu_time, 0, 0,
+         s.cpu_time/l.max_cpu_time) AS CPU_SECONDS_PROP, s.elapsed_time/1000
+         AS ELAPSED_MSECONDS, CASE WHEN s.elapsed_time < 1000 THEN '< 1 ms'
+         WHEN s.elapsed_time < 1000000 THEN
+         to_char(round(s.elapsed_time/1000,1)) || ' ms' WHEN s.elapsed_time <
+         60000000 THEN to_char(round(s.elapsed_time/1000000,1)) || ' s' ELSE
+         to_char(round(s.elapsed_time/60000000,1)) || ' m' END AS
+         ELAPSED_SECONDS_FORM, DECODE(l.max_elapsed_time, 0, 0,
+         s.elapsed_time/l.max_elapsed_time) AS ELAPSED_SECONDS_PROP,
+         s.disk_reads AS DISK_READS, CASE WHEN s.disk_reads < 1000 THEN
+         to_char(s.disk_reads) WHEN s.disk_reads < 1000000 THEN
+         to_char(round(s.disk_reads/1000,1)) || 'K' WHEN s.disk_reads <
+         1000000000 THEN to_char(round(s.disk_reads/1000000,1)) || 'M' ELSE
+         to_char(round(s.disk_reads/1000000000,1)) || 'G' END AS
+         DISK_READS_FORM, DECODE(l.max_disk_reads , 0, 0,
+         s.disk_reads/l.max_disk_reads ) AS DISK_READS_PROP, s.buffer_gets AS
+         BUFFER_GETS, CASE WHEN s.buffer_gets < 1000 THEN
+         to_char(s.buffer_gets) WHEN s.buffer_gets < 1000000 THEN
+         to_char(round(s.buffer_gets/1000,1)) || 'K' WHEN s.buffer_gets <
+         1000000000 THEN to_char(round(s.buffer_gets/1000000,1)) || 'M' ELSE
+         to_char(round(s.buffer_gets/1000000000,1)) || 'G' END AS
+         BUFFER_GETS_FORM, DECODE(l.max_buffer_gets , 0, 0,
+         s.buffer_gets/l.max_buffer_gets ) AS BUFFER_GETS_PROP, s.executions
+         AS EXECUTIONS, CASE WHEN s.executions < 1000 THEN
+         to_char(s.executions) WHEN s.executions < 1000000 THEN
+         to_char(round(s.executions/1000,1)) || 'K' WHEN s.executions <
+         1000000000 THEN to_char(round(s.executions/1000000,1)) || 'M' ELSE
+         to_char(round(s.executions/1000000000,1)) || 'G' END AS
+         EXECUTIONS_FORM, DECODE(l.max_executions , 0, 0,
+         s.executions/l.max_executions ) AS EXECUTIONS_PROP, decode(s.module,
+         null, ' ', s.module) AS MODULE, s.last_active_time AS
+         LAST_ACTIVE_TIME, decode(s.last_active_time, null, ' ',
+         to_char(s.last_active_time, 'DD-Mon-YYYY HH24:MI:SS')) AS
+         LAST_ACTIVE_TIME_FORM, s.sql_id AS SQL_ID, s.child_number AS
+         CHILD_NUMBER, s.inst_id as INST_ID from gv$sql s, ( select
+         max(cpu_time) as max_cpu_time, max(elapsed_time) as max_elapsed_time,
+         max(disk_reads) as max_disk_reads, max(buffer_gets) as
+         max_buffer_gets, max(executions) as max_executions from gv$sql ) l )
+         d ORDER BY CPU_MSECONDS DESC,SQL,DISK_READS DESC,BUFFER_GETS
+         DESC,EXECUTIONS DESC,ELAPSED_MSECONDS DESC,INST_ID DESC,MODULE
+         DESC,LAST_ACTIVE_TIME DESC ) d ) d WHERE ROW# >= :minRowNo AND ROW#
+         <= :maxRowNo
+   Rationale
+      The SQL spent 100% of its database time on CPU, I/O and Cluster waits.
+      This part of database time may be improved by the SQL Tuning Advisor.
+   Rationale
+      Database time for this SQL was divided as follows: 100% for SQL
+      execution, 0% for parsing, 0% for PL/SQL execution and 0% for Java
+      execution.
+   Rationale
+      SQL statement with SQL_ID "a4akgk9g69h83" was executed 5773 times and
+      had an average elapsed time of 3.7 seconds.
+
+   Recommendation 3: SQL Tuning
+   Estimated benefit is .15 active sessions, 3.75% of total activity.
+   ------------------------------------------------------------------
+   Action
+      Run SQL Tuning Advisor on the SELECT statement with SQL_ID
+      "0kp74n8qnbjf1".
+      Related Object
+         SQL statement with SQL_ID 0kp74n8qnbjf1.
+         SELECT DISTINCT NVL(POL.POLICY_ID,'') POLICY_ID,
+         NVL(POL.POLICY_NO,'') POLICY_NO, (CASE POL.PROPOSER_TYPE WHEN 'I'
+         THEN POL.SALUTATION || ' ' || POL.FIRST_NAME || ' ' ||
+         POL.MIDDLE_NAME || ' '|| POL.LAST_NAME ELSE POL.COMPANY_NAME END)
+         INSURED_NAME, NVL(POL.VEH_REGIST_NO,'') VEH_REGIST_NO,
+         NVL(POL.CHASSIS_NO,'') CHASSIS_NO, NVL(POL.ENGINE_NO,'') ENGINE_NO,
+         NVL(POL.ISCANCELLED,'') ISCANCELLED, NVL(POL.ISEXPIRED,'') ISEXPIRED,
+         NVL(POL.ISRECONCILED,'') ISRECONCILED, NVL(TPC.APPROVAL_STATUS,'')
+         APPROVAL_STATUS, NVL(TPC.TP_STATUS,'') AS ISCANCELLED_TPONLY,
+         (NVL(MDL.MODEL_CODE,'') || '-' || NVL(MVAR.VARIANT_CODE,''))
+         MODELVARNT, NVL(POL.IS64VB_VERIFIED,'') IS64VB_VERIFIED FROM
+         HI.VIEW_LATEST_ENDROSED1 POL LEFT OUTER JOIN
+         HI.TRANS_POLICY_CANCELLATION TPC ON TPC.FKPOLICY_ID = POL.POLICY_ID
+         LEFT OUTER JOIN HI.MST_MODEL MDL ON MDL.MODEL_ID = POL.FKMODEL_ID
+         LEFT OUTER JOIN HI.MST_VARIANT MVAR ON MVAR.VARIANT_ID =
+         POL.FKVARIANT_ID WHERE POL.ISEXPIRED = 0 AND POL.POLICY_NO =
+         NVL(UPPER(:B4 ), POL.POLICY_NO) AND POL.CHASSIS_NO = NVL(UPPER(:B3 ),
+         POL.CHASSIS_NO) AND POL.ENGINE_NO = NVL (UPPER(:B2 ), POL.ENGINE_NO)
+         AND NVL(POL.VEH_REGIST_NO_COM,'XYZ') = NVL(UPPER(:B1 ),
+         NVL(POL.VEH_REGIST_NO_COM,'XYZ'))
+   Rationale
+      The SQL spent 100% of its database time on CPU, I/O and Cluster waits.
+      This part of database time may be improved by the SQL Tuning Advisor.
+   Rationale
+      Database time for this SQL was divided as follows: 100% for SQL
+      execution, 0% for parsing, 0% for PL/SQL execution and 0% for Java
+      execution.
+   Rationale
+      SQL statement with SQL_ID "0kp74n8qnbjf1" was executed 2323 times and
+      had an average elapsed time of 5.2 seconds.
+
+   Recommendation 4: SQL Tuning
+   Estimated benefit is .15 active sessions, 3.56% of total activity.
+   ------------------------------------------------------------------
+   Action
+      Run SQL Tuning Advisor on the SELECT statement with SQL_ID
+      "2vspzzma1xwk9".
+      Related Object
+         SQL statement with SQL_ID 2vspzzma1xwk9.
+         SELECT PRO.CHASSIS_NO AS CHASSISNO, PRO.PROPOSAL_NO,
+         TO_CHAR(PRO.PROPOSAL_DATE,'dd/mm/yyyy') AS PROPOSALDATE,
+         PRO.VARIANT_MODEL_NAME AS VARIANTNAME, PRO.INSURED_NAME AS NAME,
+         PRO.GROSS_PREM AS PREMIUM, PRO.VEH_REGIST_NO AS REGISTRATION,
+         PRO.PROPOSAL_ID AS PROPOSALID, CASE PRO.PROPOSER_TYPE WHEN 'I' THEN
+         'Individual' ELSE 'Corporate' END AS PROPOSERTYPE,
+         NVL(RSKYC.RESP_KYC_STATUS,0) AS KYC_STATUS_VALUE, 'POLICY' AS
+         TRANS_TYPE, RQKYC.CREATED_DATE AS CREATED_DATE, MP.PRODUCT_NAME AS
+         PRODUCT_NAME,POL.POLICY_NO AS POLICY_NO, CASE WHEN
+         NVL(RSKYC.RESP_KYC_STATUS,0)=0 THEN 'Not Approved/ Rejected' WHEN
+         NVL(RSKYC.RESP_KYC_STATUS,0)=1 THEN 'Approved, Submit Policy' WHEN
+         NVL(RSKYC.RESP_KYC_STATUS,0)=3 THEN 'Approved, Submit Policy' WHEN
+         NVL(RSKYC.RESP_KYC_STATUS,0)=2 THEN 'KYC Pending' ELSE 'Pending' END
+         AS KYC_STATUS , NVL(RSKYC.RESP_KYC_STATUS,0) AS KYC_ACTION,
+         NVL(PRO.VISOF_KYC_REQ_NO,'') AS VISOF_KYC_REQ_NO,
+         NVL(RSKYC.RESP_IC_KYC_NO,'') AS IC_KYC_REQ_NO,
+         NVL(RSKYC.RESP_KYC_REMARK,'NA') AS KYC_REMARKS, PRO.QUOTE_NO,
+         PRO.FKPRODUCT_ID AS PRODUCT_ID FROM HI.SAVED_PROPOSAL PRO INNER JOIN
+         HI.TRANS_KYC_REQUEST RQKYC ON
+         PRO.VISOF_KYC_REQ_NO=RQKYC.REQ_VISOF_KYC_REQ_NO LEFT JOIN
+         HI.TRANS_KYC_RESPONSE RSKYC ON RQKYC.KYC_ID=RSKYC.FK_KYC_ID LEFT JOIN
+         HI.TRANS_POLICY POL ON POL.CHASSIS_NO=PRO.CHASSIS_NO AND
+         POL.VISOF_KYC_REQ_NO=PRO.VISOF_KYC_REQ_NO LEFT JOIN HI.MST_PRODUCT MP
+         ON MP.PRODUCT_ID=PRO.FKPRODUCT_ID INNER JOIN HI.VS_IC_QUOTES IQ ON
+         IQ.QUOTE_NO = PRO.QUOTE_NO WHERE TRUNC(PRO.CREATED_DATE) >=
+         TRUNC(SYSDATE)-7 AND TRUNC(PRO.INVOICE_DATE) >= TRUNC(SYSDATE) AND
+         PRO.FKDEALER_ID = CASE :B5 WHEN 0 THEN PRO.FKDEALER_ID ELSE :B5 END
+         AND PRO.CHASSIS_NO = NVL(:B4 ,PRO.CHASSIS_NO) AND PRO.FKPRODUCT_ID =
+         CASE :B3 WHEN 0 THEN PRO.FKPRODUCT_ID ELSE :B3 END AND
+         (RQKYC.CREATED_DATE >= NVL(:B2 ,RQKYC.CREATED_DATE) AND
+         TRUNC(RQKYC.CREATED_DATE) <= NVL(NVL(TO_DATE(:B1
+         ,'dd-Mon-yyyy'),TRUNC(RQKYC.CREATED_DATE)+1),TRUNC(RQKYC.CREATED_DATE
+         ))) AND NVL(POL.POLICY_ID,0)=0 AND NVL(PRO.IS_PROPOSAL_FWD,0) = 0 AND
+         TRUNC(SYSDATE)-1 < TRUNC(NVL(PRO.PROPOSAL_FWD_DATE, SYSDATE)) AND
+         RQKYC.VISOF_PROGRAM_NAME <> 'QUERYAPI' ORDER BY PRO.CREATED_DATE DESC
+   Rationale
+      The SQL spent 100% of its database time on CPU, I/O and Cluster waits.
+      This part of database time may be improved by the SQL Tuning Advisor.
+   Rationale
+      Database time for this SQL was divided as follows: 100% for SQL
+      execution, 0% for parsing, 0% for PL/SQL execution and 0% for Java
+      execution.
+   Rationale
+      SQL statement with SQL_ID "2vspzzma1xwk9" was executed 1997 times and
+      had an average elapsed time of 5.7 seconds.
+
+   Recommendation 5: SQL Tuning
+   Estimated benefit is .12 active sessions, 2.95% of total activity.
+   ------------------------------------------------------------------
+   Action
+      Run SQL Tuning Advisor on the SELECT statement with SQL_ID
+      "95qaaapk22vha".
+      Related Object
+         SQL statement with SQL_ID 95qaaapk22vha.
+         SELECT FKRTO_ID FROM HI.TRANS_POLICY WHERE POLICY_NO= NVL(UPPER(:B3
+         ), POLICY_NO) AND CHASSIS_NO= NVL(UPPER(:B2 ), CHASSIS_NO) AND
+         ENGINE_NO = NVL(UPPER(:B1 ), ENGINE_NO)
+   Rationale
+      The SQL spent 100% of its database time on CPU, I/O and Cluster waits.
+      This part of database time may be improved by the SQL Tuning Advisor.
+   Rationale
+      Database time for this SQL was divided as follows: 100% for SQL
+      execution, 0% for parsing, 0% for PL/SQL execution and 0% for Java
+      execution.
+   Rationale
+      SQL statement with SQL_ID "95qaaapk22vha" was executed 3376 times and
+      had an average elapsed time of 2.8 seconds.
+   Rationale
+      Top level calls to execute the PL/SQL statement with SQL_ID
+      "b1zztyt2kwdgm" are responsible for 100% of the database time spent on
+      the SELECT statement with SQL_ID "95qaaapk22vha".
+      Related Object
+         SQL statement with SQL_ID b1zztyt2kwdgm.
+         begin HI.USP_RENEW_GETEXISTHONDADATX(i_POLICY_NO=>:i_POLICY_NO,
+         i_CHASSIS_NO=>:i_CHASSIS_NO, i_ENGINE_NO=>:i_ENGINE_NO,
+         i_VEH_REGIST_NO_COM=>:i_VEH_REGIST_NO_COM, i_USER_ID=>:i_USER_ID,
+         i_IS_SATPRenewal=>:i_IS_SATPRenewal, r_RESULTSET=>:r_RESULTSET,
+         o_OPRRESULT=>:o_OPRRESULT); end;
+
+
+Finding 2: Table Locks
+Impact is 2.17 active sessions, 52.46% of total activity.
+---------------------------------------------------------
+Contention on table lock waits was consuming significant database time.
+
+   Recommendation 1: Application Analysis
+   Estimated benefit is 2.17 active sessions, 52.46% of total activity.
+   --------------------------------------------------------------------
+   Action
+      Investigate application logic involving DDL and DML on provided blocked
+      objects.
+   Rationale
+      The TABLE "HI.LOG_CLAIM_DATA" with object ID "317932" was locked for a
+      significant time.
+      Related Object
+         Database object with ID 317932.
+   Rationale
+      The TABLE "HI.VS_QUOTE_PREM_BREAKUP" with object ID "393429" was locked
+      for a significant time.
+      Related Object
+         Database object with ID 393429.
+
+   Symptoms That Led to the Finding:
+   ---------------------------------
+      Wait class "Application" was consuming significant database time.
+      Impact is 2.17 active sessions, 52.46% of total activity.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          Additional Information
+          ----------------------
+
+Miscellaneous Information
+-------------------------
+Wait class "Commit" was not consuming significant database time.
+Wait class "Concurrency" was not consuming significant database time.
+Wait class "Configuration" was not consuming significant database time.
+Wait class "Network" was not consuming significant database time.
+Wait class "User I/O" was not consuming significant database time.
+Session connect and disconnect calls were not consuming significant database
+time.
+Hard parsing of SQL statements was not consuming significant database time.
+
+The database's maintenance windows were active during 61% of the analysis
+period.
+
